@@ -1,0 +1,50 @@
+class User is subclass of Purse
+
+types
+
+private Name = seq of char;
+private Surname = seq of char; 
+private Sex = <Woman> | <Man> | <Indefinite>;
+private DateBirth = nat;
+private Nationality= seq of char;
+private Country = seq of char;
+private Address = seq of char;
+public UserAccount:: 
+ id: Platform`AccountId
+ name: Name
+ surname : Surname 
+ sex: Sex
+ dateB: DateBirth
+ nation: Nationality
+ country: Country
+ address: Address;
+
+instance variables
+ 
+private account: UserAccount;
+
+functions
+
+public GetUserInfo: () -> token
+GetUserInfo() == 
+    mk_token([account.name, account.surname, account.sex, account.dateB, account.nation, account.country, account.address]);
+
+public GetId: () -> Platform`AccountId
+GetId() == 
+    account.id;
+
+operations 
+
+public User: Platform`AccountId * Name * Surname * Sex * DateBirth * Nationality * Country * Address ==> User
+User(id, nam, sur, s , db, nation, c, addr) ==
+(
+account := mk_UserAccount(id,
+                         nam,
+                         sur,
+                         s,
+                         db,
+                        nation,
+                        c,
+                        addr);
+) 
+end User

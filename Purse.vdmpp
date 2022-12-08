@@ -1,0 +1,92 @@
+class Purse is subclass of Platform
+
+types
+
+public UserId = Platform`AccountId;
+public Price= Markets`Price;
+public Balance = real;
+public Value = map Markets to real;
+public Markets = Markets`Stocks;
+public Asset = map Markets to real;
+public Equity = real;
+public PurseAccount:: 
+ id: UserId
+ user: User
+ asset : Asset 
+ balance: Balance
+ equity: Equity;
+
+instance variables
+
+private purse : PurseAccount;
+  
+functions
+
+public GetEquity: Asset -> real
+GetEquity(asset)==
+if asset= {|->}
+  then 0
+else let id in set dom asset in 
+       asset(id) * Markets`prices(id) + GetEquity({id} <-: asset)      
+measure card dom asset;
+
+
+operations
+
+private IncreaseBal: real ==> ()
+IncreaseBal(sum)==
+  purse.balance := purse.balance + sum
+pre sum > 0;
+
+private DecreaseBal: real ==> ()
+DecreaseBal(min)==
+  purse.balance := purse.balance - min
+pre min > 0
+  and purse.balance > min;
+
+private IncreaseAsset: Markets * real ==> ()
+IncreaseAsset(stock, sum)==
+(
+dcl actual : real,
+updated: map Markets to real;
+
+actual := purse.asset(stock);
+updated := {stock |-> actual + sum};
+purse.asset := purse.asset ++ updated;
+)
+pre stock in set dom purse.asset 
+  and sum > 0;
+
+private DecreaseAsset: Markets * real ==> ()
+DecreaseAsset(stock, min)==
+(
+dcl actual : real,
+updated: map Markets to real;
+
+actual := purse.asset(stock);
+updated := {stock |-> actual - min};
+purse.asset := purse.asset ++ updated;
+)
+pre stock in set dom purse.asset
+  and min> 0
+    and purse.asset(stock) > min;
+
+pure public GetBalance:() ==> real
+GetBalance()== 
+  return purse.balance;
+
+pure public GetAsset:() ==> Asset
+GetAsset()== 
+  return purse.asset;
+
+public Purse: User'Id * Name * Surname * Sex * DateBirth * Nationality * Country * Address ==> Purse
+Purse(id, nam, sur, s , db, nation, c, addr) ==
+(
+purse := mk_PurseAccount(id,
+                         new User (newId, nam, sur, s, db, nation, c, addr),
+                         {|->},
+                         0,
+                         0);
+) 
+
+end Purse

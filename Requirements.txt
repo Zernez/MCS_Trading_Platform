@@ -1,0 +1,12 @@
+R1: An app-based system is to be developed for automatize and fast esecution of trading in the stock market
+R2: The application have to create amd identity, manage the authentication and authorization of users to perform actions into the market
+R3: The platform can manage several markets, starting from 4 stock markets
+R4: The action that can be taken are substantially two: Buy and sell
+R5: The platform decide and shows a determined price depending on averaged two factor: A price reference from other two trading platform and the order-book
+R6: The order-book determine a price taking the middle of the gap-price between ask and bid registered orders in Walrasian auction type (tâtonnement) in perfect information.
+R7: The platform has to manage a critical event on market such as extreme volatility
+R8: The application has to be acknowledged by the balance, the total asset and equity of the user for authorize partially or totally an user to operate in the market
+R9: The application has to be acknowledged by the balance, the total asset and equity of the user for authorize a withdraw
+R10: The value balance-asset-equity and a balance of an user cannot be less than zero
+R11: The application has two critical action depending on value balance-asset-equity: First action thresholded as an alarm and a second action an immediate sold of a target position
+

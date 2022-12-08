@@ -1,0 +1,53 @@
+private MakeTransaction: real * OrderInfo * OrderInfo -> bool
+MakeTransaction(priceClose, sellT ,buyT)==
+let transactionBuy= mk_BuyTransaction(buyT, priceClose), transactionSell= mk_SellTransaction(sellT, priceClose)
+     in
+       if priceClose> 0
+          then let buyTransaction= {transactionBuy} union buyTransaction, sellTransaction= {transactionSell} union sellTransaction,
+                   confirm= true
+          in 
+            if confirm
+                then true       
+               else
+                false
+       else
+          false;
+
+
+private MakeTransaction: real * OrderInfo * OrderInfo ==> bool
+MakeTransaction(priceClose, sellT ,buyT)==
+(
+dcl transactionBuy : BuyTransaction,
+transactionSell : SellTransaction;
+
+if priceClose= 0
+then return false
+else    
+     transactionBuy:= mk_BuyTransaction(buyT, priceClose);
+     transactionSell:= mk_SellTransaction(sellT, priceClose);
+     buyTransaction := {transactionBuy} union buyTransaction;
+     sellTransaction := {transactionSell} union sellTransaction;
+     return true;  
+)
+
+public MakePrice: SellOrders * BuyOrders * Price -> real
+MakePrice(sellO, buyO, price)==
+if sellO= {|->} and buyO= {|->}
+then price
+else let idB in set dom buyO in 
+let idS in set dom sellO in
+let buyP= idB.price, sellP= idS.price, compare= Comparing(buyP,sellP)
+       in
+         if compare > 0
+              then let modPrice= (buyP + sellP) / 2, confirm= MakeTransaction(modPrice, idB, idS)
+              in 
+                 if confirm
+                     then modPrice
+                 else price    
+         else
+              price;
+
+private Comparing: real * real -> real
+Comparing(buy , sell)==
+let priceB = buy, priceS= sell in
+       priceB - priceS;

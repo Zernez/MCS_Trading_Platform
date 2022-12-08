@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "Lens config: Launch Markets`GetInfo",
+            "type": "vdm",
+            "request": "launch",
+            "noDebug": true,
+            "defaultName": "Markets",
+            "command": "p new Markets().GetInfo()"
+        }
+    ]
+}
