@@ -21,72 +21,75 @@ private purses : Purses := {};
 
 operations
 
-protected OrderSender: Orders`CustomerId * Orders`StockId * Orders`OrdType * real * Orders`Stocks ==> bool
+protected OrderSender: Orders`CustomerId * Orders`StockId * Orders`OrdType * real * Markets`Stocks ==> int
 OrderSender(cId, stock, type, qt, stName) ==
 (
-dcl purse: Purse,
+dcl purseItem: set of Purse,
     price: Orders`Price;
 
-purse := {x | x in set purses & x.purseId= cId};
-price := prices(stName);
-if purse.DecreaseBal(price * qt)
-    then if purse.IncreaseAsset(stock, qt)
+purseItem := {x | x in set purses & x.purse.id= cId};
+price := Markets`prices(stName);
+if purseItem`DecreaseBal(price * qt)
+    then if purseItem`IncreaseAsset(stock, qt)
         then if Orders`SendOrder(cId, stock, type, qt, price)
-               then return true;
+                then return 0
+                else return 3
+        else return 2
+    else return 1;
 )
-pre {x | x in set purses & x.purseId= cId} <> {};
+pre {x | x in set purses & x.purse.id= cId} <> {};
 
 protected OrderDeleter: Orders`OrderInfo ==> ()
 OrderDeleter(info) ==
 (
-dcl purse: Purse,
+dcl purseItem: set of Purse,
     price: Orders`Price;
 
-purse := {x | x in set purses & x.purseId= buyOrders(info)};
-price := prices(info.sId);
-purse.IncreaseBal(price * info.qt);
-purse.DecreaseAsset(info.sId , info.qt);
+purseItem := {x | x in set purses & x.purse.id = info.ordId};
+price := Markets`prices(info.sId);
+purseItem`IncreaseBal(price * info.qt);
+purseItem`DecreaseAsset(info.sId , info.qt);
 Orders`DeleteOrder(info);
 )
-pre {x | x in set purses & x.purseId= cId} <> {};
+pre {x | x in set purses & x.purse.id= info.ordId} <> {};
 
-protected Deposit: Name * Surname * Purse`PurseAccount * real ==> bool
+private Deposit: Name * Surname * Purse`PurseAccount * real ==> bool
 Deposit(nam, sur, purse, amount) ==
 (
 dcl purseId: Purse`UserId,
-    purse: Purse;
+    purseItem: set of Purse;
 
 purseId := purse.id;
-purse := {x | x in set purses & x.user.name= nam and x.user.surname= sur and x.purseId= purseId};
-if purse= {}
+purseItem := {x | x in set purses & x.purse.user.account.name = nam and x.purse.user.account.surname= sur and x.purse.id= purseId};
+if purse.id = 0
     then return false
-    else purse := purse.IncreaseBal(amount);
+    else purseItem := purseItem`IncreaseBal(amount);
          return true;
 )
-pre {x | x in set purses & x.user.name= nam and x.user.surname= sur and x.purseId= purseId} <> {};
+pre {x | x in set purses & x.purse.user.account.name = nam and x.purse.user.account.surname = sur and x.purse.id= purse.id} <> {};
 
-protected Withdraw: Name * Surname * Purse`PurseAccount * real ==> bool
+private Withdraw: Name * Surname * Purse`PurseAccount * real ==> bool
 Withdraw(nam, sur, purse, amount) ==
 (
 dcl purseId: Purse`UserId,
-    purse: Purse;
+    purseItem: set of Purse;
 
 purseId := purse.id;
-purse := {x | x in set purses & x.user.name= nam and x.user.surname= sur and x.purseId= purseId};
-if purse= {}
+purseItem := {x | x in set purses & x.purse.user.account.name = nam and x.purse.user.account.surname = sur and x.purse.id= purseId};
+if purse.id = 0
     then 
         return false
     else 
-        purse := purse.DecreaseBal(amount);
+        purseItem := purseItem`DecreaseBal(amount);
         return true;
 )
-pre {x | x in set purses & x.user.name= nam and x.user.surname= sur and x.purseId= purseId} <> {};
+pre {x | x in set purses & x.purse.user.account.name = nam and x.purse.user.account.surname = sur and x.purse.id = purse.id} <> {};
 
-protected CreateUser: Name * Surname * Sex * DateBirth * Nationality * Country * Address ==> bool
+private CreateUser: Name * Surname * Sex * DateBirth * Nationality * Country * Address ==> ()
 CreateUser(nam, sur, s , db, nation, c, addr) ==
 (
 dcl wallet : set of Purse,
-    id : IdUser;
+    id : AccountId;
 
 id := CreateId();
 
@@ -102,14 +105,14 @@ wallet := {new Purse(
 purses := wallet union purses;   
 );
 
-protected DeleteUser: Name * Surname * Purse`PurseAccount ==> bool
+private DeleteUser: Name * Surname * Purse`PurseAccount ==> bool
 DeleteUser(nam, sur, purse) ==
 (
 dcl purseId: Purse`UserId,
-    purseCheck: Purse;
+    purseCheck: set of Purse;
 
 purseId := purse.id;
-purseCheck := {x | x in set purses & x.user.name= nam and x.user.surname= sur and x.purseId= purseId};
+purseCheck := {x | x in set purses & x.purse.user.account.name= nam and x.purse.user.account.surname = sur and x.purse.id = purseId};
 if purseCheck= {}
     then 
         return false
@@ -125,11 +128,11 @@ CreateId() ==
 
   tempId := MATH`rand(36);
 
-  if tempId > 0 and forall x in set purses & tempId <> x.ordId  
+  if tempId > 0 and forall x in set purses & tempId <> x.purse.id  
     then 
         return tempId
     else 
-        CreateOrderId();
+        CreateId();
 );
 
 end Platform

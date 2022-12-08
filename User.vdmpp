@@ -2,13 +2,13 @@ class User is subclass of Purse
 
 types
 
-private Name = seq of char;
-private Surname = seq of char; 
-private Sex = <Woman> | <Man> | <Indefinite>;
-private DateBirth = nat;
-private Nationality= seq of char;
-private Country = seq of char;
-private Address = seq of char;
+public Name = seq of char;
+public Surname = seq of char; 
+public Sex = <Woman> | <Man> | <Indefinite>;
+public DateBirth = nat;
+public Nationality= seq of char;
+public Country = seq of char;
+public Address = seq of char;
 public UserAccount:: 
  id: Platform`AccountId
  name: Name
@@ -21,19 +21,17 @@ public UserAccount::
 
 instance variables
  
-private account: UserAccount;
+public account: UserAccount;
 
-functions
+operations
 
-public GetUserInfo: () -> token
+public GetUserInfo: () ==> token
 GetUserInfo() == 
-    mk_token([account.name, account.surname, account.sex, account.dateB, account.nation, account.country, account.address]);
+    return mk_token([account.name, account.surname, account.sex, account.dateB, account.nation, account.country, account.address]);
 
-public GetId: () -> Platform`AccountId
+public GetId: () ==> Platform`AccountId
 GetId() == 
-    account.id;
-
-operations 
+    return account.id;
 
 public User: Platform`AccountId * Name * Surname * Sex * DateBirth * Nationality * Country * Address ==> User
 User(id, nam, sur, s , db, nation, c, addr) ==

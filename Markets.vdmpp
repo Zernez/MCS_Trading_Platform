@@ -17,7 +17,6 @@ public Transaction::
 instance variables
 
 public prices : Prices := {|->};
-   inv rng prices > 0;
 public sellTransaction: set of Transaction := {};
 public buyTransaction : set of Transaction := {};
 

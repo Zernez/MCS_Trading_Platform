@@ -16,7 +16,7 @@ public OrderInfo::
  price: Price;
 public BuyOrders = map OrderInfo to CustomerId;
 public SellOrders =  map OrderInfo to CustomerId;
-public Balance = real;
+
  
 instance variables
 
@@ -40,7 +40,7 @@ CreateOrderId() ==
  );
  
 
-public SendOrder: CustomerId * StockId * OrdType * real * real ==> bool
+public SendOrder: CustomerId * StockId * OrdType * real * Price ==> bool
 SendOrder(cId, stock, type, qt, pr) ==
 (
   dcl order : OrderInfo,
@@ -64,14 +64,14 @@ pre qt > 0 and pr > 0;
 private MapBuyOrder: OrderInfo * CustomerId ==> ()
 MapBuyOrder(orderMap, id)==
   buyOrders := {orderMap |-> id} munion buyOrders
-pre buyOrders(info) in set dom buyOrders;
+pre orderMap in set dom buyOrders;
 
 private MapSellOrder: OrderInfo * CustomerId ==> ()
 MapSellOrder(orderMap, id)==
   sellOrders := {orderMap |-> id} munion sellOrders
-pre sellOrders(info) in set dom sellOrders;
+pre orderMap in set dom sellOrders;
 
-public DeleteOrder: OrderInfo ==> bool
+public DeleteOrder: OrderInfo ==> ()
 DeleteOrder(info) ==
 (
 dcl id : OrderNo,
@@ -84,7 +84,7 @@ cases orType:
    <Sell> -> DeleteSellOrder(info)
    end;
 )
-pre buyOrders(info) in set dom buyOrders or sellOrders(info) in set dom sellOrders;
+pre info in set dom buyOrders or info in set dom sellOrders;
 
 private DeleteBuyOrder: OrderInfo ==> ()
 DeleteBuyOrder(orderMap)==

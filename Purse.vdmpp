@@ -5,9 +5,7 @@ types
 public UserId = Platform`AccountId;
 public Price= Markets`Price;
 public Balance = real;
-public Value = map Markets to real;
-public Markets = Markets`Stocks;
-public Asset = map Markets to real;
+public Asset = map Markets`Stocks to real;
 public Equity = real;
 public PurseAccount:: 
  id: UserId
@@ -18,18 +16,17 @@ public PurseAccount::
 
 instance variables
 
-private purse : PurseAccount;
+public purse : PurseAccount;
   
 functions
 
-public GetEquity: Asset -> real
-GetEquity(asset)==
+public GetEquity: Asset * Markets`Price -> real
+GetEquity(asset, price)==
 if asset= {|->}
   then 0
 else let id in set dom asset in 
-       asset(id) * Markets`prices(id) + GetEquity({id} <-: asset)      
+       asset(id) * price + GetEquity({id} <-: asset, price)      
 measure card dom asset;
-
 
 operations
 
@@ -44,11 +41,11 @@ DecreaseBal(min)==
 pre min > 0
   and purse.balance > min;
 
-private IncreaseAsset: Markets * real ==> ()
+private IncreaseAsset: Markets`Stocks * real ==> ()
 IncreaseAsset(stock, sum)==
 (
 dcl actual : real,
-updated: map Markets to real;
+updated: map Markets`Stocks to real;
 
 actual := purse.asset(stock);
 updated := {stock |-> actual + sum};
@@ -57,19 +54,19 @@ purse.asset := purse.asset ++ updated;
 pre stock in set dom purse.asset 
   and sum > 0;
 
-private DecreaseAsset: Markets * real ==> ()
+private DecreaseAsset: Markets`Stocks * real ==> ()
 DecreaseAsset(stock, min)==
 (
 dcl actual : real,
-updated: map Markets to real;
+updated: map Markets`Stocks to real;
 
 actual := purse.asset(stock);
 updated := {stock |-> actual - min};
 purse.asset := purse.asset ++ updated;
 )
-pre stock in set dom purse.asset
-  and min> 0
-    and purse.asset(stock) > min;
+pre dom purse.asset inter {stock} <> {}
+    and min > 0
+      and purse.asset(stock) > min;
 
 pure public GetBalance:() ==> real
 GetBalance()== 
@@ -79,10 +76,10 @@ pure public GetAsset:() ==> Asset
 GetAsset()== 
   return purse.asset;
 
-public Purse: User'Id * Name * Surname * Sex * DateBirth * Nationality * Country * Address ==> Purse
-Purse(id, nam, sur, s , db, nation, c, addr) ==
+public Purse: Platform`AccountId * User`Name * User`Surname * User`Sex * User`DateBirth * User`Nationality * User`Country * User`Address ==> Purse
+Purse(newId, nam, sur, s , db, nation, c, addr) ==
 (
-purse := mk_PurseAccount(id,
+purse := mk_PurseAccount(newId,
                          new User (newId, nam, sur, s, db, nation, c, addr),
                          {|->},
                          0,
