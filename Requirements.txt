@@ -10,3 +10,64 @@ R9: The application has to be acknowledged by the balance, the total asset and e
 R10: The value balance-asset-equity and a balance of an user cannot be less than zero
 R11: The application has two critical action depending on value balance-asset-equity: First action thresholded as an alarm and a second action an immediate sold of a target position
 
+Exam:
+
+Compare alternative abstraction mechanisms in VDM and exemplify where they can be used
+-email
+
+Explain and compare semantics of VDM collections:
+-sets {}
+-seq []
+-mappings {|->} 
+    -reverse mappings
+
+Provide an overview of the concepts in VDM
+-purpose of vdm 
+    -declarative language 
+-basic concepts 
+    -classes, inheritance, operation, function (difference), pre-post condition
+-difference between a imperative language and declarative
+-testing
+
+Explain and compare the different validation techniques in a VDM setting
+-pre/post conditions
+-invariance
+-proof obligations
+-unit/system testing
+    -difference
+
+Provide an overview of the process for developing distributed real-time systems using VDM-RT
+-use cases
+-design models
+    -world/time 
+    -++sequential   
+    -++concurrency
+    -realtime
+    -validation
+-testing different design models
+    -testing the entire system
+
+Explain the concepts and semantics of the concurrency concepts in VDM++
+-what is concurrency
+-solve the problem with threads
+-synch permission predicates
+-mutexes and history conters
+-producer/consumer example
+
+
+Reflect upon pros and cons with practical use of VDM for mission critical applications
+-purpose
+-pro
+    -verification/validation
+    -low risk in development
+    -use-cases
+        -critical or not
+        -big or small project
+-cons
+    -takes time and increase costs
+    -human errors
+    -not widespread
+    -use-cases
+        -critical or not
+        -big or small project
+

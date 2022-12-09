@@ -27,15 +27,13 @@ MakePrice(sellO, buyO, price)==
 if sellO= {|->} and buyO= {|->}
 then []
 else let idB in set dom buyO in 
-let idS in set dom sellO in
-let buyP= idB.price, sellP= idS.price, updatedP= updatePrice(buyP,sellP,price), newP= checkPrice(buyP,sellP), stockS= idS.sId ,stockB= idB.sId 
-       in
-         if newP and stockS = stockB
-            then
-               [mk_Transaction(idS, updatedP), mk_Transaction(idB, updatedP)]
-            else
-               [];  
- 
+      let idS in set dom sellO in
+         let buyP= idB.price, sellP= idS.price, updatedP= updatePrice(buyP,sellP,price), newP= checkPrice(buyP,sellP), stockS= idS.sId ,stockB= idB.sId in
+            if newP and stockS = stockB
+               then
+                  [mk_Transaction(idS, updatedP), mk_Transaction(idB, updatedP)]
+               else
+                  [];  
 
 private updatePrice: real * real * Price-> real
 updatePrice(sell, buy, lastP)==
@@ -60,38 +58,30 @@ operations
 public CheckMarkets: SellOrders * BuyOrders * Price ==> bool
 CheckMarkets(sellO, buyO, actualPrice)==
 (
-dcl orderSell : set of OrderInfo,
-orderBuy : set of OrderInfo,
-closedOrders : seq of Transaction,
-aPrice : real;
-
-aPrice := actualPrice;
-orderSell := dom sellO;
-orderBuy := dom buyO;
-closedOrders := MakePrice(sellO, buyO, aPrice);
-if closedOrders = []
-  then  
-     return false
-  else
-     prices := prices ++ {(hd closedOrders).order.sId |-> (hd closedOrders).closePrice};
-     registerTransaction(closedOrders);
-     Orders`DeleteOrder(closedOrders(1).order);
-     Orders`DeleteOrder(closedOrders(2).order);
-     return true;
+let aPrice = actualPrice in
+   let closedOrders = MakePrice(sellO, buyO, aPrice) in
+      (
+      if closedOrders = []
+      then  
+         return false
+      else
+         prices := prices ++ {(hd closedOrders).order.sId |-> (hd closedOrders).closePrice};
+         registerTransaction(closedOrders);
+         Orders`DeleteOrder(closedOrders(1).order);
+         Orders`DeleteOrder(closedOrders(2).order);
+         return true;
+      )
 )
 pre actualPrice > 0;
 
 private registerTransaction: seq of Transaction ==> ()
 registerTransaction(transactions)==
 (
-dcl
-recordSell: set of Transaction,
-recordBuy: set of Transaction;
-
-recordSell := {transactions(1)};
-recordBuy := {transactions(2)};
-sellTransaction := recordSell union sellTransaction;
-buyTransaction := recordBuy union buyTransaction;
+let recordSell = {transactions(1)}, recordBuy = {transactions(2)} in
+   (
+   sellTransaction := recordSell union sellTransaction;
+   buyTransaction := recordBuy union buyTransaction;
+   )
 )
 pre transactions(1) <> transactions(2)
 post sellTransaction <> {} and buyTransaction <> {};

@@ -1,4 +1,4 @@
-class Orders is subclass of Platform
+class Orders
 
 types
 
@@ -28,10 +28,7 @@ operations
 private CreateOrderId: () ==> OrderNo
 CreateOrderId() ==
  (
-  dcl tempId : nat1;
-
-  tempId := MATH`rand(25);
-
+let tempId= MATH`rand(25) in
   if tempId > 0 and forall x in set dom buyOrders & tempId <> x.ordId  
     then 
       return tempId
@@ -43,21 +40,16 @@ CreateOrderId() ==
 public SendOrder: CustomerId * StockId * OrdType * real * Price ==> bool
 SendOrder(cId, stock, type, qt, pr) ==
 (
-  dcl order : OrderInfo,
-  id : OrderNo;
-
-  id := CreateOrderId();
-  order :=  mk_OrderInfo(id, type, stock, qt, pr);
-  cases type:
-    <Buy> -> MapBuyOrder(order, cId), 
-    <Sell> -> MapSellOrder(order, cId)
-    end;
-
-if id= 0
-  then  
-     return false
-  else
-    return true;
+let id = CreateOrderId() in
+  let order = mk_OrderInfo(id, type, stock, qt, pr) in
+    if id= 0
+      then return false
+      else 
+        cases type:
+          <Buy> -> MapBuyOrder(order, cId), 
+          <Sell> -> MapSellOrder(order, cId)
+          end;
+        return true;
 )
 pre qt > 0 and pr > 0;
 
@@ -74,30 +66,22 @@ pre orderMap in set dom sellOrders;
 public DeleteOrder: OrderInfo ==> ()
 DeleteOrder(info) ==
 (
-dcl id : OrderNo,
-orType: OrdType; 
-
-id := info.ordId;
-orType := info.ordType;
-cases orType:
-   <Buy> -> DeleteBuyOrder(info),
-   <Sell> -> DeleteSellOrder(info)
-   end;
+let orType = info.ordType in
+      cases orType:
+        <Buy> -> DeleteBuyOrder(info), 
+        <Sell> -> DeleteSellOrder(info)
+        end;
 )
 pre info in set dom buyOrders or info in set dom sellOrders;
 
 private DeleteBuyOrder: OrderInfo ==> ()
 DeleteBuyOrder(orderMap)==
-(
-  buyOrders := {orderMap}  <-:  buyOrders;
-)
+  buyOrders := {orderMap}  <-:  buyOrders
 pre orderMap in set dom buyOrders;
 
 private DeleteSellOrder: OrderInfo ==> ()
 DeleteSellOrder(orderMap)==
-(
-  sellOrders := {orderMap}  <-:  sellOrders;
-)
+  sellOrders := {orderMap}  <-:  sellOrders
 pre orderMap in set dom buyOrders;
 
 end Orders

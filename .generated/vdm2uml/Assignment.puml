@@ -1,0 +1,145 @@
+@startuml Assignment
+
+hide empty members
+skinparam Shadowing false
+skinparam classAttributeIconSize 0
+skinparam ClassBorderThickness 0.5
+skinparam groupInheritance 5
+skinparam class {
+	BackgroundColor AntiqueWhite
+	ArrowColor Black
+	BorderColor Black
+}
+skinparam defaultTextAlignment center
+
+class MATH
+{
+	+sin(real) : real <<function>>
+	+cos(real) : real <<function>>
+	+tan(real) : real <<function>>
+	+cot(real) : real <<function>>
+	+asin(real) : real <<function>>
+	+acos(real) : real <<function>>
+	+atan(real) : real <<function>>
+	+acot(real) : real <<function>>
+	+sqrt(real) : real <<function>>
+	+pi_f() : real <<function>>
+	+srand(int)
+	+rand(int) : int
+	+srand2(int) : int
+	+exp(real) : real <<function>>
+	+ln(real) : real <<function>>
+	+log(real) : real <<function>>
+	+fac(nat) : nat1 <<function>>
+	+pi : real <<value>>
+	-euler : real <<value>>
+}
+
+class Markets
+{
+	+Price : real <<type>>
+	+Stocks : <MIB40> | <NASDAQ> <<type>>
+	+StockList : seq of Stocks <<type>>
+	+Prices : map Stocks to Price <<type>>
+	+OrderInfo : {ordId : ordType : sId : qt : price} <<type>>
+	+SellOrders : map OrderInfo to CustomerId <<type>>
+	+BuyOrders : map OrderInfo to CustomerId <<type>>
+	+Order : map OrderInfo to Orders <<type>>
+	+CustomerId : UserId <<type>>
+	+Transaction : {order : closePrice} <<type>>
+	+prices : Prices
+	+sellTransaction : set of Transaction
+	+buyTransaction : set of Transaction
+	-MakePrice(SellOrders, BuyOrders, Price) : seq of Transaction <<function>>
+	-updatePrice(real, real, Price) : real <<function>>
+	-checkPrice(real, real) : bool <<function>>
+	+CheckMarkets(SellOrders, BuyOrders, Price) : bool
+	-registerTransaction(seq of Transaction)
+}
+
+class Orders
+{
+	+CustomerId : UserId <<type>>
+	+OrderNo : nat1 <<type>>
+	+StockId : Stocks <<type>>
+	+Quantity : real <<type>>
+	+Price : real <<type>>
+	+OrdType : <Buy> | <Sell> <<type>>
+	+OrderInfo : {ordId : ordType : sId : qt : price} <<type>>
+	+BuyOrders : map OrderInfo to CustomerId <<type>>
+	+SellOrders : map OrderInfo to CustomerId <<type>>
+	+buyOrders : BuyOrders
+	+sellOrders : SellOrders
+	-CreateOrderId() : OrderNo
+	+SendOrder(CustomerId, StockId, OrdType, real, Price) : bool
+	-MapBuyOrder(OrderInfo, CustomerId)
+	-MapSellOrder(OrderInfo, CustomerId)
+	+DeleteOrder(OrderInfo)
+	-DeleteBuyOrder(OrderInfo)
+	-DeleteSellOrder(OrderInfo)
+}
+
+class Platform
+{
+	-Purses : set of Purse <<type>>
+	-Name : seq of char <<type>>
+	-Surname : seq of char <<type>>
+	-Sex : <Indefinite> | <Man> | <Woman> <<type>>
+	-DateBirth : nat <<type>>
+	-Nationality : seq of char <<type>>
+	-Country : seq of char <<type>>
+	-Address : seq of char <<type>>
+	-Customer : CustomerId <<type>>
+	-Stock : Stocks <<type>>
+	+AccountId : nat1 <<type>>
+	-purses : Purses
+	#OrderSender(CustomerId, StockId, OrdType, real, Stocks) : int
+	#OrderDeleter(OrderInfo) : int
+	-Deposit(Name, Surname, PurseAccount, real) : bool
+	-Withdraw(Name, Surname, PurseAccount, real) : bool
+	-CreateUser(Name, Surname, Sex, DateBirth, Nationality, Country, Address)
+	-DeleteUser(Name, Surname, PurseAccount) : bool
+	#CreateId() : AccountId
+}
+
+class Purse
+{
+	+UserId : AccountId <<type>>
+	+Price : real <<type>>
+	+Balance : real <<type>>
+	+Asset : map Stocks to real <<type>>
+	+Equity : real <<type>>
+	+PurseAccount : {id : user : asset : balance : equity} <<type>>
+	+purse : PurseAccount
+	+GetEquity(Asset, Price) : real <<function>>
+	+IncreaseBal(real) : bool
+	+DecreaseBal(real) : bool
+	+IncreaseAsset(Stocks, real) : bool
+	+DecreaseAsset(Stocks, real) : bool
+	+GetBalance() : real
+	+GetAsset() : Asset
+	+Purse(AccountId, Name, Surname, Sex, DateBirth, Nationality, Country, Address) : Purse
+}
+
+class User
+{
+	+Name : seq of char <<type>>
+	+Surname : seq of char <<type>>
+	+Sex : <Indefinite> | <Man> | <Woman> <<type>>
+	+DateBirth : nat <<type>>
+	+Nationality : seq of char <<type>>
+	+Country : seq of char <<type>>
+	+Address : seq of char <<type>>
+	+UserAccount : :: <<type>>
+	+account : ::
+	+GetUserInfo() : token
+	+GetId() : AccountId
+	+User(AccountId, Name, Surname, Sex, DateBirth, Nationality, Country, Address) : User
+}
+
+Orders <|-- Markets
+Orders <|-- Platform
+Platform <|-- Purse
+Purse <|-- User
+
+@enduml
