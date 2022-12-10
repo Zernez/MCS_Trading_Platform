@@ -1,8 +1,9 @@
-class Platform is subclass of Orders
+class Platform
 
 types
 
 private Purses= set of Purse;
+private Order= Orders;
 private Name = seq of char;
 private Surname = seq of char; 
 private Sex = <Woman> | <Man> | <Indefinite>;
@@ -10,7 +11,6 @@ private DateBirth = nat;
 private Nationality= seq of char;
 private Country = seq of char;
 private Address = seq of char;
-private Customer= Markets`CustomerId;
 private Stock= Markets`Stocks;
 
 public AccountId = nat1;
@@ -18,17 +18,22 @@ public AccountId = nat1;
 instance variables
 
 private purses : Purses := {};
-
+public order : Order := new Orders({|->},{|->});
+    
 operations
 
-protected OrderSender: Orders`CustomerId * Orders`StockId * Orders`OrdType * real * Markets`Stocks ==> int
-OrderSender(cId, stock, type, qt, stName) ==
+public getPurse: AccountId ==> set of Purse
+getPurse(cId) ==
+return {x | x in set purses & x.purse.id= cId};
+
+protected OrderSender: Orders`CustomerId * Orders`StockId * Orders`OrdType * real ==> int
+OrderSender(cId, stock, type, qt) ==
 (
-let purseItem = {x | x in set purses & x.purse.id= cId}, price = Markets`prices(stName) in 
+let purseItem = getPurse(cId), price = Markets`prices(stock) in 
     let p in set purseItem in 
         if p.DecreaseBal(price * qt)
             then if p.IncreaseAsset(stock, qt)
-                then if Orders`SendOrder(cId, stock, type, qt, price)
+                then if order.SendOrder(cId, stock, type, qt, price)
                     then return 0
                     else return 3
             else return 2
@@ -39,13 +44,13 @@ pre {x | x in set purses & x.purse.id= cId} <> {};
 protected OrderDeleter: Orders`OrderInfo ==> int
 OrderDeleter(info) ==
 (
-let purseItem = {x | x in set purses & x.purse.id = info.ordId}, price = Markets`prices(info.sId) in 
+let purseItem = getPurse(info.ordId), price = Markets`prices(info.sId) in 
     let p in set purseItem in
         if p.IncreaseBal(price * info.qt)
             then if p.DecreaseAsset(info.sId , info.qt)
-                then (Orders`DeleteOrder(info);
-                      return 0
-                     )
+                then if order.DeleteOrder(info)
+                     then return 0
+                     else return 3  
             else return 2
         else return 1;    
 )
@@ -60,8 +65,8 @@ let purseId = purse.id in
             if purse.id = 0
                 then return false
                 else if p.IncreaseBal(amount)
-                    then return true
-                    else return false;
+                        then return true
+                        else return false;
 )
 pre {x | x in set purses & x.purse.user.account.name = nam and x.purse.user.account.surname = sur and x.purse.id= purse.id} <> {};
 
@@ -74,8 +79,8 @@ let purseId = purse.id in
             if purse.id = 0
                 then return false
                 else if p.DecreaseBal(amount)
-                    then return true
-                    else return false;
+                        then return true
+                        else return false;
 )
 pre {x | x in set purses & x.purse.user.account.name = nam and x.purse.user.account.surname = sur and x.purse.id = purse.id} <> {};
 

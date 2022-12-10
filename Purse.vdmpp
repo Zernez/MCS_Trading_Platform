@@ -55,8 +55,7 @@ let actual= purse.asset(stock) in
     purse.asset := purse.asset ++ updated;
     return true;
 )
-pre stock in set dom purse.asset 
-  and sum > 0;
+pre sum > 0;
 
 public DecreaseAsset: Markets`Stocks * real ==> bool
 DecreaseAsset(stock, min)==

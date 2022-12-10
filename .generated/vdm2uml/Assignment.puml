@@ -38,15 +38,14 @@ class MATH
 class Markets
 {
 	+Price : real <<type>>
-	+Stocks : <MIB40> | <NASDAQ> <<type>>
-	+StockList : seq of Stocks <<type>>
+	+Stocks : <NASDAQ> | <NYSE> | <SPIIDNK> <<type>>
 	+Prices : map Stocks to Price <<type>>
 	+OrderInfo : {ordId : ordType : sId : qt : price} <<type>>
 	+SellOrders : map OrderInfo to CustomerId <<type>>
 	+BuyOrders : map OrderInfo to CustomerId <<type>>
 	+Order : map OrderInfo to Orders <<type>>
 	+CustomerId : UserId <<type>>
-	+Transaction : {order : closePrice} <<type>>
+	+Transaction : {customer : order : closePrice : diff : quantity} <<type>>
 	+prices : Prices
 	+sellTransaction : set of Transaction
 	+buyTransaction : set of Transaction
@@ -74,14 +73,16 @@ class Orders
 	+SendOrder(CustomerId, StockId, OrdType, real, Price) : bool
 	-MapBuyOrder(OrderInfo, CustomerId)
 	-MapSellOrder(OrderInfo, CustomerId)
-	+DeleteOrder(OrderInfo)
-	-DeleteBuyOrder(OrderInfo)
-	-DeleteSellOrder(OrderInfo)
+	+DeleteOrder(OrderInfo) : bool
+	-DeleteBuyOrder(OrderInfo) : bool
+	-DeleteSellOrder(OrderInfo) : bool
+	+Orders(BuyOrders, SellOrders) : Orders
 }
 
 class Platform
 {
 	-Purses : set of Purse <<type>>
+	-Order : Orders <<type>>
 	-Name : seq of char <<type>>
 	-Surname : seq of char <<type>>
 	-Sex : <Indefinite> | <Man> | <Woman> <<type>>
@@ -89,11 +90,12 @@ class Platform
 	-Nationality : seq of char <<type>>
 	-Country : seq of char <<type>>
 	-Address : seq of char <<type>>
-	-Customer : CustomerId <<type>>
 	-Stock : Stocks <<type>>
 	+AccountId : nat1 <<type>>
 	-purses : Purses
-	#OrderSender(CustomerId, StockId, OrdType, real, Stocks) : int
+	+order : Order
+	+getPurse(AccountId) : set of Purse
+	#OrderSender(CustomerId, StockId, OrdType, real) : int
 	#OrderDeleter(OrderInfo) : int
 	-Deposit(Name, Surname, PurseAccount, real) : bool
 	-Withdraw(Name, Surname, PurseAccount, real) : bool
@@ -137,8 +139,8 @@ class User
 	+User(AccountId, Name, Surname, Sex, DateBirth, Nationality, Country, Address) : User
 }
 
-Orders <|-- Markets
-Orders <|-- Platform
+Platform <|-- Markets
+Platform <|-- Orders
 Platform <|-- Purse
 Purse <|-- User
 

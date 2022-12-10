@@ -25,11 +25,11 @@ public account: UserAccount;
 
 operations
 
-public GetUserInfo: () ==> token
+pure public GetUserInfo: () ==> token
 GetUserInfo() == 
     return mk_token([account.name, account.surname, account.sex, account.dateB, account.nation, account.country, account.address]);
 
-public GetId: () ==> Platform`AccountId
+pure public GetId: () ==> Platform`AccountId
 GetId() == 
     return account.id;
 

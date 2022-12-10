@@ -1,4 +1,4 @@
-class Orders
+class Orders is subclass of Platform
 
 types
 
@@ -6,7 +6,7 @@ public CustomerId= Purse`UserId;
 public OrderNo= nat1;
 public StockId= Markets`Stocks;
 public Quantity= real;
-public Price= real;
+public Price= Markets`Price;
 public OrdType = <Buy> | <Sell>;
 public OrderInfo:: 
  ordId: OrderNo
@@ -20,8 +20,8 @@ public SellOrders =  map OrderInfo to CustomerId;
  
 instance variables
 
-public buyOrders: BuyOrders := {|->};
-public sellOrders : SellOrders := {|->};
+public buyOrders: BuyOrders;
+public sellOrders : SellOrders;
 
 operations
 
@@ -36,18 +36,17 @@ let tempId= MATH`rand(25) in
       CreateOrderId();
  );
  
-
 public SendOrder: CustomerId * StockId * OrdType * real * Price ==> bool
 SendOrder(cId, stock, type, qt, pr) ==
 (
 let id = CreateOrderId() in
-  let order = mk_OrderInfo(id, type, stock, qt, pr) in
+  let orderI = mk_OrderInfo(id, type, stock, qt, pr) in
     if id= 0
       then return false
       else 
         cases type:
-          <Buy> -> MapBuyOrder(order, cId), 
-          <Sell> -> MapSellOrder(order, cId)
+          <Buy> -> MapBuyOrder(orderI, cId), 
+          <Sell> -> MapSellOrder(orderI, cId)
           end;
         return true;
 )
@@ -63,25 +62,37 @@ MapSellOrder(orderMap, id)==
   sellOrders := {orderMap |-> id} munion sellOrders
 pre orderMap in set dom sellOrders;
 
-public DeleteOrder: OrderInfo ==> ()
+public DeleteOrder: OrderInfo ==> bool
 DeleteOrder(info) ==
 (
 let orType = info.ordType in
-      cases orType:
-        <Buy> -> DeleteBuyOrder(info), 
-        <Sell> -> DeleteSellOrder(info)
-        end;
+      if orType = <Buy>
+        then return DeleteBuyOrder(info)
+        else return DeleteSellOrder(info)
 )
 pre info in set dom buyOrders or info in set dom sellOrders;
 
-private DeleteBuyOrder: OrderInfo ==> ()
+private DeleteBuyOrder: OrderInfo ==> bool
 DeleteBuyOrder(orderMap)==
-  buyOrders := {orderMap}  <-:  buyOrders
+(
+  buyOrders := {orderMap}  <-:  buyOrders;
+  return true;
+)
 pre orderMap in set dom buyOrders;
 
-private DeleteSellOrder: OrderInfo ==> ()
+private DeleteSellOrder: OrderInfo ==> bool
 DeleteSellOrder(orderMap)==
-  sellOrders := {orderMap}  <-:  sellOrders
+(
+  sellOrders := {orderMap}  <-:  sellOrders;
+  return true;
+)
 pre orderMap in set dom buyOrders;
+
+public Orders: BuyOrders * SellOrders ==> Orders
+Orders(buyO,sellO) ==
+(
+buyOrders := buyO;
+sellOrders := sellO;
+) 
 
 end Orders
