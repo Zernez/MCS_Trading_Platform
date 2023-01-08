@@ -7,7 +7,6 @@ public Prices = map Stocks to Price;
 public OrderInfo= Orders`OrderInfo;
 public SellOrders = Orders`SellOrders;
 public BuyOrders = Orders`BuyOrders;
-public Order= map Orders`OrderInfo to Orders;
 public CustomerId= Purse`UserId;
 public Transaction::
  customer: CustomerId
@@ -109,7 +108,7 @@ let aPrice = actualPrice in
                )
          else return false;
 )
-pre actualPrice > 0;
+pre actualPrice > 0 and sellO <> {|->} and buyO <> {|->};
 
 private registerTransaction: seq of Transaction ==> ()
 registerTransaction(transactions)==

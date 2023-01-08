@@ -1,0 +1,26 @@
+class PurseTest is subclass of TestCase, Platform
+
+values
+
+asset : set of Purse`PurseAccount = {mk_Purse`PurseAccount(2000, new User(2000, "Test", "Test", <Indefinite> , 100000, "Test", "TT", "Test"), {<NASDAQ>|->0} ,0, 0)};
+stock : Markets`Stocks = <NASDAQ>;
+increase : real = 100;
+
+
+
+operations
+
+public runTest : () ==> ()
+runTest() ==
+ (IncreaseAssetTest(););
+
+
+public IncreaseAssetTest : () ==> ()
+IncreaseAssetTest() == 
+(
+dcl purse : Purse := new Purse();
+
+Assert`assertTrue(purse.IncreaseAsset(stock, increase) = true);
+);
+
+end PurseTest

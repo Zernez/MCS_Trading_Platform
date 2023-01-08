@@ -1,0 +1,13 @@
+class PlatformTest
+operations
+public Execute : () ==> ()
+Execute() ==
+ let ts : TestSuite = new TestSuite(),
+ Testresult = new TestResult()
+ in
+ (ts.addTest(new MarketsTest());
+ ts.addTest(new OrdersTest());
+ ts.addTest(new PurseTest());
+ ts.run(Testresult);
+ IO`println(Testresult.toString()););
+end PlatformTest

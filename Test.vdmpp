@@ -1,0 +1,7 @@
+class Tests
+
+operations
+public Run: TestResult ==> ()
+Run (-) == is subclass responsibility
+
+end Tests

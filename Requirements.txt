@@ -13,7 +13,11 @@ R11: The application has two critical action depending on value balance-asset-eq
 Exam:
 
 Compare alternative abstraction mechanisms in VDM and exemplify where they can be used
--email
+-What is and why we use abstraction to model complex systems
+-Types: Tokens, Collections, records, enumerations build-ins (nat, real etc.)
+-Predicates and quantifiers to formalate invariants, pre and post conditions
+-Example: Set comprehension predicate
+-Example: Operations with pre- and post conditinos using quantifiers
 
 Explain and compare semantics of VDM collections:
 -sets {}

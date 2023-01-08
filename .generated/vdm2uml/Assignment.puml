@@ -43,7 +43,6 @@ class Markets
 	+OrderInfo : {ordId : ordType : sId : qt : price} <<type>>
 	+SellOrders : map OrderInfo to CustomerId <<type>>
 	+BuyOrders : map OrderInfo to CustomerId <<type>>
-	+Order : map OrderInfo to Orders <<type>>
 	+CustomerId : UserId <<type>>
 	+Transaction : {customer : order : closePrice : diff : quantity} <<type>>
 	+prices : Prices

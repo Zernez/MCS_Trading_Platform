@@ -1,0 +1,19 @@
+class OrdersTest is subclass of TestCase, Platform
+
+values
+
+operations
+
+protected CreateOrderIdTest : () ==> ()
+CreateOrderIdTest() == 
+(
+dcl orders : Orders := new Orders();
+
+assertTrue(orders.CreateOrderId() > 0);
+);
+
+protected runTest : () ==> ()
+runTest() ==
+ (CreateOrderIdTest(););
+
+end OrdersTest

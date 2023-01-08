@@ -2,16 +2,16 @@ class Platform
 
 types
 
-private Purses= set of Purse;
-private Order= Orders;
-private Name = seq of char;
-private Surname = seq of char; 
-private Sex = <Woman> | <Man> | <Indefinite>;
-private DateBirth = nat;
-private Nationality= seq of char;
-private Country = seq of char;
-private Address = seq of char;
-private Stock= Markets`Stocks;
+public Purses= set of Purse;
+public Order= Orders;
+public Name = seq of char;
+public Surname = seq of char; 
+public Sex = <Woman> | <Man> | <Indefinite>;
+public DateBirth = nat;
+public Nationality= seq of char;
+public Country = seq of char;
+public Address = seq of char;
+public Stock= Markets`Stocks;
 
 public AccountId = nat1;
 
@@ -26,7 +26,7 @@ public getPurse: AccountId ==> set of Purse
 getPurse(cId) ==
 return {x | x in set purses & x.purse.id= cId};
 
-protected OrderSender: Orders`CustomerId * Orders`StockId * Orders`OrdType * real ==> int
+public OrderSender: Orders`CustomerId * Orders`StockId * Orders`OrdType * real ==> int
 OrderSender(cId, stock, type, qt) ==
 (
 let purseItem = getPurse(cId), price = Markets`prices(stock) in 
@@ -41,7 +41,7 @@ let purseItem = getPurse(cId), price = Markets`prices(stock) in
 )
 pre {x | x in set purses & x.purse.id= cId} <> {};
 
-protected OrderDeleter: Orders`OrderInfo ==> int
+public OrderDeleter: Orders`OrderInfo ==> int
 OrderDeleter(info) ==
 (
 let purseItem = getPurse(info.ordId), price = Markets`prices(info.sId) in 
@@ -56,7 +56,7 @@ let purseItem = getPurse(info.ordId), price = Markets`prices(info.sId) in
 )
 pre {x | x in set purses & x.purse.id= info.ordId} <> {};
 
-private Deposit: Name * Surname * Purse`PurseAccount * real ==> bool
+public Deposit: Name * Surname * Purse`PurseAccount * real ==> bool
 Deposit(nam, sur, purse, amount) ==
 (
 let purseId = purse.id in 
@@ -70,7 +70,7 @@ let purseId = purse.id in
 )
 pre {x | x in set purses & x.purse.user.account.name = nam and x.purse.user.account.surname = sur and x.purse.id= purse.id} <> {};
 
-private Withdraw: Name * Surname * Purse`PurseAccount * real ==> bool
+public Withdraw: Name * Surname * Purse`PurseAccount * real ==> bool
 Withdraw(nam, sur, purse, amount) ==
 (
 let purseId = purse.id in 
@@ -84,7 +84,7 @@ let purseId = purse.id in
 )
 pre {x | x in set purses & x.purse.user.account.name = nam and x.purse.user.account.surname = sur and x.purse.id = purse.id} <> {};
 
-private CreateUser: Name * Surname * Sex * DateBirth * Nationality * Country * Address ==> ()
+public CreateUser: Name * Surname * Sex * DateBirth * Nationality * Country * Address ==> ()
 CreateUser(nam, sur, s , db, nation, c, addr) ==
 (
 dcl wallet : set of Purse,
@@ -104,7 +104,7 @@ wallet := {new Purse(
 purses := wallet union purses;   
 );
 
-private DeleteUser: Name * Surname * Purse`PurseAccount ==> bool
+public DeleteUser: Name * Surname * Purse`PurseAccount ==> bool
 DeleteUser(nam, sur, purse) ==
 (
 let purseId = purse.id in 
@@ -117,7 +117,7 @@ let purseId = purse.id in
                 return true;
 );
 
-protected CreateId: () ==> AccountId
+public CreateId: () ==> AccountId
 CreateId() ==
 (  
 let tempId = MATH`rand(36) in

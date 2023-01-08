@@ -25,7 +25,7 @@ public sellOrders : SellOrders;
 
 operations
 
-private CreateOrderId: () ==> OrderNo
+public CreateOrderId: () ==> OrderNo
 CreateOrderId() ==
  (
 let tempId= MATH`rand(25) in

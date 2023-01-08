@@ -1,0 +1,22 @@
+class MarketsTest is subclass of TestCase, Platform
+
+values
+
+sell: Orders`SellOrders = {mk_Orders`OrderInfo(2000, <Sell>, <NASDAQ> ,2, 1200)|-> 6000};
+buy : Orders`BuyOrders = {mk_Orders`OrderInfo(1000, <Buy>, <NASDAQ> ,2, 1200)|-> 5000};
+lastPrice : Markets`Price = 1300;
+
+operations
+
+protected CheckMarketsTest : () ==> ()
+CheckMarketsTest() == 
+(
+dcl markets : Markets := new Markets();
+assertTrue(markets.CheckMarkets(sell, buy, lastPrice) = true);
+);
+
+protected runTest : () ==> ()
+runTest() ==
+ (CheckMarketsTest(););
+
+end MarketsTest
